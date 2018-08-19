@@ -12,9 +12,9 @@ import json
 import os
 
 import tkinter.ttk as ttk
-from tkinter import *
 from tkinter import font
-import pygame
+from tkinter import *
+import simpleaudio as sa
 
 
 LAYOUT_OF_POSITIONS_AND_COMMANDS =    [                                                                                 # layout of positions and commands - base for object hierarchy
@@ -137,7 +137,7 @@ class Position(object):
 
         self.__name = TRANSLATIONS[LANGUAGE][position_name_par]
         self.__id = "".join(("position_", str(position_number_par)))
-        self.__sound_filename = "".join((LANGUAGE, "_", position_name_par, ".ogg"))
+        self.__sound_filename = "".join((LANGUAGE, "_", position_name_par, ".wav"))
 
         self.__all_commands = []
         self.__selected_commands = []
@@ -199,9 +199,8 @@ class Position(object):
 
         print(self.__name)
 
-        position_sound = pygame.mixer.music
         file_path = "".join((os.getcwd(), "/sounds/", LANGUAGE, "/", self.__sound_filename))
-        position_sound.load(file_path)
+        position_sound = sa.WaveObject.from_wave_file(file_path)
         position_sound.play()
 
     def get_position_name(self):
@@ -247,15 +246,14 @@ class Command(object):
     def __init__(self, command_name_par):
 
         self._name = TRANSLATIONS[LANGUAGE][command_name_par]
-        self.__sound_filename = "".join((LANGUAGE, "_", command_name_par, ".ogg"))
+        self.__sound_filename = "".join((LANGUAGE, "_", command_name_par, ".wav"))
 
     def play_command_sound(self):
 
         print(self._name)
 
-        command_sound = pygame.mixer.music
         file_path = "".join((os.getcwd(), "/sounds/", LANGUAGE, "/", self.__sound_filename))
-        command_sound.load(file_path)
+        command_sound = sa.WaveObject.from_wave_file(file_path)
         command_sound.play()
 
     def get_command_name(self):
@@ -1019,7 +1017,7 @@ class Application(Frame):
         self.__duration_of_set = self.__draw_value(value_base_par=value_base, value_minus_par=value_minus,
                                                    value_plus_par=value_plus)
 
-        print("czas ćwiczenia:", self.__duration_of_set)
+        print("duration of set:", self.__duration_of_set)
 
     def __draw_duration_of_position(self):
 
@@ -1034,7 +1032,7 @@ class Application(Frame):
             self.__duration_of_position = self.__draw_value(value_base_par=value_base, value_minus_par=value_minus,
                                                             value_plus_par=value_plus)
 
-        print("czas na postawę:", self.__duration_of_position)
+        print("duration of position:", self.__duration_of_position)
 
     def __draw_duration_of_command(self):
 
@@ -1049,7 +1047,7 @@ class Application(Frame):
             self.__duration_of_command = self.__draw_value(value_base_par=value_base, value_minus_par=value_minus,
                                                            value_plus_par=value_plus)
 
-        print("czas na komendę:", self.__duration_of_command)
+        print("duration of command:", self.__duration_of_command)
 
     def __draw_duration_of_break(self):
 
@@ -1062,7 +1060,7 @@ class Application(Frame):
 
         self.__moment_of_begin_break = datetime.datetime.now()
 
-        print("czas na przerwę:", self.__duration_of_break)
+        print("duration of break:", self.__duration_of_break)
 
     def __draw_number_of_sets(self):
 
@@ -1075,7 +1073,7 @@ class Application(Frame):
 
         self.__number_of_sets_remain = self.__number_of_sets
 
-        print("ilość serii:", self.__number_of_sets)
+        print("number of sets:", self.__number_of_sets)
 
     def __draw_position(self):
 
@@ -1229,8 +1227,6 @@ class Application(Frame):
         self.__entry_of_number_of_sets_remain.insert(0, self.__number_of_sets_remain)
 
     def __start_workout(self):
-
-        pygame.mixer.init()
 
         self.__check_selection_of_positions()
         self.__check_selection_of_commands()
@@ -1449,7 +1445,7 @@ class Application(Frame):
 root = Tk()
 
 # Modify window
-root.title("The Drill v1.0")
+root.title("The Drill v1.0.1")
 root.resizable(False, False)
 
 # add a main frame
